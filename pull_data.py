@@ -8,11 +8,11 @@ import matplotlib
 matplotlib.rcParams['backend'] = "Qt4Agg"
 import matplotlib.pyplot as plt
 from matplotlib.dates import date2num    
-
+from matplotlib.finance import candlestick_ohlc
 
 SYMBOL = 'SPX'
 def get_intraday_data(symbol, interval_seconds=3601, num_days=15):
-	import datetime
+    import datetime
     # Specify URL string based on function inputs.
     url_string = 'http://www.google.com/finance/getprices?q={0}'.format(symbol.upper())
     url_string += "&i={0}&p={1}d&f=d,o,h,l,c,v".format(interval_seconds,num_days)
@@ -36,8 +36,8 @@ def get_intraday_data(symbol, interval_seconds=3601, num_days=15):
 class Stock_DataFrame(object):
 	def __init__(self, dataframe):
 		self.dataframe = dataframe
-		self.SHAPE = 104
-		self.STEP_SIZE = 104/5
+		self.SHAPE = self.dataframe.shape[0] - 1
+		self.STEP_SIZE = self.SHAPE/5
 	#    #
 	def plot_candlestick(self):
 		#change datetime objects to date2num for candlestick
@@ -55,8 +55,8 @@ class Stock_DataFrame(object):
 		ax.set_xticklabels(date_marks, rotation = 45)
 		print ('Plotting Candlestick')
 	def plot_bollinger_bands(self, n):
-		MA = pd.Series(pd.rolling_mean(df['Close'], n))  
-		MSD = pd.Series(pd.rolling_std(df['Close'], n))  
+		MA = pd.Series(pd.rolling_mean(self.dataframe['Close'], n))  
+		MSD = pd.Series(pd.rolling_std(self.dataframe['Close'], n))  
 		b1 = MA + 2 * MSD
 		b2 = MA - 2 * MSD
 		fake_x = np.arange(0, self.SHAPE + 1)
