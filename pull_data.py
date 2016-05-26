@@ -1,6 +1,5 @@
 import datetime
 import pandas as pd
-import pandas_datareader.data as web
 import requests
 import numpy as np
 import math
@@ -45,7 +44,7 @@ class Stock_DataFrame(object):
 		marks = [math.floor(x) for x in marks]
 		date_marks = []
 		for i in marks:
-			datetime = list(test['Datetime'])[i]
+			datetime = list(self.dataframe['Datetime'])[i]
 			date_marks.append(datetime.strftime('%m/%d %H:00'))
 		self.dataframe['Datetime'] = np.arange(0, self.SHAPE + 1)
 		tupled = [tuple(x) for x in self.dataframe.values]
@@ -66,6 +65,13 @@ class Stock_DataFrame(object):
 	def show_plot(self):
 		plt.show()
 
+
+if __name__ == "__main__":
+	pulled_data = get_intraday_data(SYMBOL)
+	stocked = Stock_DataFrame(pulled_data)
+	stocked.plot_candlestick()
+	stocked.plot_bollinger_bands(10)
+	stocked.show_plot()
 
 
 
