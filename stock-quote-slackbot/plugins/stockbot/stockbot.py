@@ -10,7 +10,8 @@ import numpy as np
 import math
 import matplotlib
 import psycopg2
-matplotlib.rcParams['backend'] = "Qt4Agg"
+matplotlib.use('Agg')
+#matplotlib.rcParams['backend'] = "Qt4Agg"
 import matplotlib.pyplot as plt
 from matplotlib.dates import date2num    
 from matplotlib.finance import candlestick_ohlc
@@ -113,7 +114,7 @@ class Stock_DataFrame(object):
     
     def plot_candlestick(self):
         marks = np.arange(0, self.SHAPE + self.STEP_SIZE, step=self.STEP_SIZE)
-        marks = [math.floor(x) for x in marks]
+        marks = [int(math.floor(x)) for x in marks]
         marks = marks[:6+1]
         date_marks = []
         for i in marks:
