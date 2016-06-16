@@ -1,0 +1,13 @@
+requests
+python-daemon
+pyyaml
+numpy
+websocket-client
+boto
+matplotlib
+psycopg2
+math
+pandas
+uuid
+slackclient
+matplotlib
