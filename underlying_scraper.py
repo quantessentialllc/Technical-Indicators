@@ -4,6 +4,8 @@ import requests
 import numpy as np
 import math
 import psycopg2
+import pytz
+from dateutil import tz
 
 SYMBOL = 'SPX'
 INTERVAL_SECONDS=3601
@@ -21,8 +23,12 @@ def get_intraday_data(symbol, interval_seconds=61, num_days=15):
     # Save data in Pandas DataFrame
     df = pd.DataFrame(r, columns=['Datetime','Close','High','Low','Open','Volume'])
     # Convert UNIX to Datetime format
+    from_zone = tz.gettz('UTC')
+    to_zone = tz.gettz('US/Pacific')
     datetimed = [datetime.datetime.fromtimestamp(int(x[1:])) for x in list(df['Datetime'])]
-    df['Datetime'] = datetimed
+    datetimed_as_utc = [x.replace(tzinfo=from_zone) for x in datetimed]
+    datetimed_as_pst = [x.astimezone(to_zone).replace(tzinfo=None) for x in datetimed_as_utc]
+    df['Datetime'] = datetimed_as_pst
     #df['Datetime'] = df['Datetime'].apply(lambda x: datetime.datetime.fromtimestamp(int(x[1:])))
     cols = ['Datetime', 'Open', 'High', 'Low', 'Close']
     df = df[cols]
@@ -38,7 +44,7 @@ def create_connection():
 
 def pull_last_date(connection):
 	""""Pulls the last time recorded time in the underlying table"""
-	query = 'SELECT MAX(datetime) from underlying2'
+	query = 'SELECT MAX(datetime) from underlying'
 	pull = pd.read_sql_query(query, connection)['max'][0]
 	print('last date in db: ' + pull)
 	return pull 
@@ -65,7 +71,7 @@ def update_db(connection, intraday_dataframe):
 		high = row['High']
 		low = row['Low']
 		opened = row['Open']
-		query = "INSERT INTO underlying2 (datetime, close_price, high_price, low_price, open_price) VALUES (%s, %s, %s, %s, %s);"
+		query = "INSERT INTO underlying (datetime, close_price, high_price, low_price, open_price) VALUES (%s, %s, %s, %s, %s);"
 		data = (datetime, close, high, low, opened)
 		cursor.execute(query, data)
 		count +=1
