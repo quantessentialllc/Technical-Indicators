@@ -15,8 +15,7 @@ import boto
 from boto.s3.key import Key
 
 SLACK_TOKEN='xoxb-51362182401-RB3eWRs4u3xdXEyGBubNBc83'
-AWS_KEY='AKIAJ45LIVBDUEVII33A'
-AWS_SECRET='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'
+
 
 
 def create_connection():
