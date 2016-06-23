@@ -14,7 +14,6 @@ from boto.s3.connection import S3Connection
 import boto
 from boto.s3.key import Key
 
-SLACK_TOKEN='xoxb-51362182401-RB3eWRs4u3xdXEyGBubNBc83'
 
 
 
